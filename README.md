@@ -1,3 +1,22 @@
+## TripNest
+TripNest is a web-based Travel App designed for booking travel tickets, trips, events, and outdoor activities. Created as the Final Project for a Front-End Web Development Bootcamp, this project showcases the use of modern web technologies including Next.js (Pages Router), React.js (JavaScript/JSX), and TailwindCSS for styling.
+
+This application provides a responsive user experience, making it accessible across desktops, tablets, and mobile devices.
+
+## Key Features
+- Browse-First Approach: Guests can explore trips and activities before registering or logging in.
+- Role-Based Access:
+  -  Guest: Public content access.
+  -  User: Booking and transaction capabilities.
+  -  Admin: Content management with a dedicated dashboard.
+- Authentication, Categories, Activities, Promotions, Banners, Payment Methods, and Transaction functionalities.
+- Responsive design powered by TailwindCSS.
+
+## Build
+- Framework: Next.js
+- Frontend: React.js
+- Styling: TailwindCSS
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
 ## Getting Started
