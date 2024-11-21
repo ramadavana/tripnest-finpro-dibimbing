@@ -2,20 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  * {
+    @apply m-0 p-0;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html,
+  body {
+    @apply bg-[#F2F2F2] text-[#222831] scroll-smooth;
+  }
+
+  nav,
+  footer {
+    @apply container mx-auto px-4 py-2 max-w-screen-xl;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .mobile-nav-link {
+    @apply flex items-center gap-2 hover:text-[#F96D00] transition-all duration-200 ease-in-out border-b-2 border-[#F2F2F2] border-opacity-20 hover:border-[#F96D00] hover:border-opacity-100 pb-1;
+  }
+
+  .btn-1,
+  .btn-2,
+  .btn-3 {
+    @apply rounded-lg px-4 py-2 border-2 border-transparent font-bold shadow-lg transition-all duration-200 ease-in-out;
+  }
+
+  .btn-1 {
+    @apply bg-[#F96D00] text-[#F2F2F2] hover:bg-[#A03D00];
+  }
+
+  .btn-2 {
+    @apply bg-[#393E46] text-[#F2F2F2] hover:bg-[#222831] border-[#F2F2F2] hover:border-[#F2F2F2];
+  }
+
+  .icon-link {
+    @apply hover:text-[#F96D00] hover:scale-125 transition-all duration-200 ease-in-out;
+  }
+
+  .nav-link-1 {
+    @apply hover:text-[#F96D00] border-b-2 border-transparent hover:border-[#F96D00] transition-all duration-200 ease-in-out;
+  }
+
+  .nav-link-2 {
+    @apply hover:text-[#F96D00] transition-all duration-200 ease-in-out;
+  }
+
+  .foot-menu {
+    @apply font-bold uppercase opacity-50 tracking-widest;
+  }
+}
+
+@layer utilities {
+  .overflow-x-auto::-webkit-scrollbar,
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 12px !important;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar,
+  .overflow-y-auto::-webkit-scrollbar {
+    display: block;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-track,
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background-color: #cecece !important;
+    border-radius: 8px !important;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-thumb,
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    border-radius: 8px !important;
+    background-color: #f96d00 !important;
+  }
 }
