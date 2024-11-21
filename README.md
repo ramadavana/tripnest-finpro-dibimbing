@@ -13,9 +13,9 @@ This application provides a responsive user experience, making it accessible acr
 - Responsive design powered by TailwindCSS.
 
 ## Build
-- Framework: Next.js
-- Frontend: React.js
-- Styling: TailwindCSS
+- Framework: Next.js (15.0.3)
+- Frontend: React.js (19.0.0-rc-66855b96-20241106)
+- Styling: TailwindCSS (^3.4.1)
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
