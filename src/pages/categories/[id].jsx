@@ -15,6 +15,10 @@ export default function CategoryDetailPage() {
   const router = useRouter();
   const { id } = router.query;
 
+  const formatCurrency = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   useEffect(() => {
     if (id) {
       fetchCategoryById(id);
@@ -139,8 +143,11 @@ export default function CategoryDetailPage() {
               />
               <h3 className="mt-2 text-lg font-semibold">{activity.title}</h3>
               <p className="text-gray-600">{activity.description}</p>
-              <p className="mt-2">
-                <strong>Price:</strong> ${activity.price}
+              <p className="mt-2 line-through">
+                <strong>Price:</strong> Rp{formatCurrency(activity.price)}
+              </p>
+              <p className="mt-2 text-[#f96d00] font-semibold">
+                <strong>Price:</strong> Rp{formatCurrency(activity.price - activity.price_discount)}
               </p>
               <p className="mt-1">
                 <strong>Rating:</strong> {activity.rating} ({activity.total_reviews} reviews)

@@ -130,6 +130,12 @@ export default function Categories() {
                   <p className="mt-1 text-sm text-gray-600">
                     {activity.description || "No description available"}
                   </p>
+
+                  <div className="flex items-center mt-1 text-sm text-yellow-500">
+                    <ion-icon name="star" />
+                    <span>{activity.rating}</span>
+                    <span className="ml-2 text-gray-500">({activity.total_reviews} reviews)</span>
+                  </div>
                   <div className="mt-2">
                     <p className="text-gray-400 line-through">
                       Rp {activity.price.toLocaleString("id-ID")}
@@ -177,6 +183,14 @@ export default function Categories() {
                         <p className="mt-1 text-sm text-gray-600">
                           {activity.description || "No description available"}
                         </p>
+
+                        <div className="flex items-center mt-1 text-sm text-yellow-500">
+                          <ion-icon name="star" />
+                          <span>{activity.rating}</span>
+                          <span className="ml-2 text-gray-500">
+                            ({activity.total_reviews} reviews)
+                          </span>
+                        </div>
                         <div className="mt-2">
                           <p className="text-gray-400 line-through">
                             Rp {activity.price.toLocaleString("id-ID")}
