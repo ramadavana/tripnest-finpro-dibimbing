@@ -158,7 +158,7 @@ export default function Home() {
       <div className="relative flex flex-col px-8 mt-8 rounded-xl md:mt-12 md:px-12 lg:mx-32 lg:py-8 lg:border-2 lg:border-[#cecece]">
         <h2 className="mb-8 text-2xl font-bold text-center text-[#F96D00]">Ongoing Promos</h2>
         <div className="flex gap-4 pb-4 overflow-x-auto">
-          {promos.map((promo) => (
+          {promos.slice(0, 5).map((promo) => (
             <Link key={promo.id} href={`/promos/${promo.id}`}>
               <div className="w-[250px] h-[250px] p-4 bg-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#F96D00] hover:text-[#f2f2f2] transition-all duration-300">
                 <h3 className="mb-2 text-lg font-semibold text-center">{promo.title}</h3>
