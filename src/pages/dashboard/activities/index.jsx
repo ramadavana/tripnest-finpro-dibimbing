@@ -3,10 +3,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { useUploadImage } from "@/contexts/UploadImageContext";
+import Link from "next/link";
 
 const DashboardActivities = () => {
   const [activities, setActivities] = useState([]);
+  const [filteredActivities, setFilteredActivities] = useState([]); // Untuk menyimpan aktivitas yang difilter
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(""); // Kategori yang dipilih untuk filter
   const [currentActivity, setCurrentActivity] = useState({
     id: null,
     categoryId: "",
@@ -38,6 +41,7 @@ const DashboardActivities = () => {
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       setActivities(sortedActivitesByDate);
+      setFilteredActivities(sortedActivitesByDate); // Set ke data awal
     } catch (error) {
       console.error("Failed to fetch activities:", error.response?.data || error.message);
     }
@@ -55,94 +59,14 @@ const DashboardActivities = () => {
     }
   };
 
-  const handleCreateOrUpdate = async (e) => {
-    e.preventDefault();
-    console.log("Submitting Data:", currentActivity); // Debugging
-
-    try {
-      const token = getCookie("token");
-      const apiUrl = isEditing
-        ? `https://travel-journal-api-bootcamp.do.dibimbing.id/api/v1/update-activity/${currentActivity.id}`
-        : `https://travel-journal-api-bootcamp.do.dibimbing.id/api/v1/create-activity`;
-
-      // Upload images if any
-      const imageUrls = await Promise.all(
-        currentActivity.imageFiles.map((file) => uploadImage(file))
-      );
-
-      const response = await axios.post(
-        apiUrl,
-        {
-          categoryId: currentActivity.categoryId,
-          title: currentActivity.title,
-          description: currentActivity.description,
-          imageUrls: imageUrls, // Use uploaded image URLs
-          price: parseFloat(currentActivity.price),
-          price_discount: parseFloat(currentActivity.price_discount),
-          rating: parseFloat(currentActivity.rating),
-          total_reviews: parseInt(currentActivity.total_reviews),
-          facilities: currentActivity.facilities,
-          address: currentActivity.address,
-          province: currentActivity.province,
-          city: currentActivity.city,
-          location_maps: currentActivity.location_maps,
-        },
-        {
-          headers: {
-            apiKey: "24405e01-fbc1-45a5-9f5a-be13afcd757c",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("Response:", response.data);
-      alert(isEditing ? "Activity updated successfully!" : "Activity created successfully!"); // Success alert
-      fetchActivities(); // Refresh data
-      resetForm(); // Reset form
-    } catch (error) {
-      console.error("Error:", error.response.data);
-      alert("Failed to save activity");
+  const handleFilterByCategory = (categoryId) => {
+    setSelectedCategory(categoryId);
+    if (categoryId === "") {
+      setFilteredActivities(activities); // Tampilkan semua aktivitas jika tidak ada filter
+    } else {
+      const filtered = activities.filter((activity) => activity.category.id === categoryId);
+      setFilteredActivities(filtered);
     }
-  };
-
-  const handleDelete = async (id) => {
-    const token = getCookie("token");
-    if (confirm("Are you sure you want to delete this activity? This action cannot be undone.")) {
-      try {
-        await axios.delete(
-          `https://travel-journal-api-bootcamp.do.dibimbing.id/api/v1/delete-activity/${id}`,
-          {
-            headers: { apiKey, Authorization: `Bearer ${token}` },
-          }
-        );
-        alert("Activity deleted successfully!");
-        fetchActivities();
-      } catch (error) {
-        console.error("Failed to delete activity:", error.response?.data || error.message);
-        alert("Failed to delete activity.");
-      }
-    }
-  };
-
-  const resetForm = () => {
-    setCurrentActivity({
-      id: null,
-      categoryId: "",
-      title: "",
-      description: "",
-      imageUrls: [],
-      price: "",
-      price_discount: "",
-      rating: "",
-      total_reviews: "",
-      facilities: "",
-      address: "",
-      province: "",
-      city: "",
-      location_maps: "",
-      imageFiles: [],
-    });
-    setIsEditing(false);
   };
 
   useEffect(() => {
@@ -154,178 +78,26 @@ const DashboardActivities = () => {
     <div className="p-4 ml-16 md:p-8">
       <h1 className="mb-4 text-2xl font-bold">Manage Activities</h1>
 
-      {/* Form */}
-      <form onSubmit={handleCreateOrUpdate} className="mb-6">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {/* Select Category */}
-          <select
-            value={currentActivity.categoryId}
-            onChange={(e) => setCurrentActivity({ ...currentActivity, categoryId: e.target.value })}
-            required
-            className="px-3 py-2 border rounded">
-            <option value="">Select Category</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+      {/* Filter by Category */}
+      <div className="flex gap-4 mb-6">
+        <select
+          value={selectedCategory}
+          onChange={(e) => handleFilterByCategory(e.target.value)}
+          className="px-3 py-2 border rounded">
+          <option value="">All Categories</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
 
-          {/* Title */}
-          <input
-            type="text"
-            placeholder="Activity Title"
-            value={currentActivity.title}
-            onChange={(e) => setCurrentActivity({ ...currentActivity, title: e.target.value })}
-            required
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* Description */}
-          <textarea
-            placeholder="Description"
-            value={currentActivity.description}
-            onChange={(e) =>
-              setCurrentActivity({ ...currentActivity, description: e.target.value })
-            }
-            required
-            className="col-span-3 px-3 py-2 border rounded"
-          />
-
-          {/* Images */}
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={(e) =>
-              setCurrentActivity({
-                ...currentActivity,
-                imageFiles: Array.from(e.target.files),
-              })
-            }
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* Price */}
-          <input
-            type="number"
-            placeholder="Price"
-            value={currentActivity.price}
-            onChange={(e) => setCurrentActivity({ ...currentActivity, price: e.target.value })}
-            required
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* Price Discount */}
-          <input
-            type="number"
-            placeholder="Price Discount"
-            value={currentActivity.price_discount}
-            onChange={(e) =>
-              setCurrentActivity({
-                ...currentActivity,
-                price_discount: e.target.value,
-              })
-            }
-            required
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* Rating */}
-          <input
-            type="number"
-            step="0.1"
-            placeholder="Rating (1-10)"
-            value={currentActivity.rating}
-            onChange={(e) => setCurrentActivity({ ...currentActivity, rating: e.target.value })}
-            required
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* Total Reviews */}
-          <input
-            type="number"
-            placeholder="Total Reviews"
-            value={currentActivity.total_reviews}
-            onChange={(e) =>
-              setCurrentActivity({
-                ...currentActivity,
-                total_reviews: e.target.value,
-              })
-            }
-            required
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* Facilities */}
-          <textarea
-            placeholder="Facilities (e.g., Gym, Pool, etc.)"
-            value={currentActivity.facilities}
-            onChange={(e) => setCurrentActivity({ ...currentActivity, facilities: e.target.value })}
-            required
-            className="col-span-3 px-3 py-2 border rounded"
-          />
-
-          {/* Address */}
-          <input
-            type="text"
-            placeholder="Address"
-            value={currentActivity.address}
-            onChange={(e) => setCurrentActivity({ ...currentActivity, address: e.target.value })}
-            required
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* Province */}
-          <input
-            type="text"
-            placeholder="Province"
-            value={currentActivity.province}
-            onChange={(e) => setCurrentActivity({ ...currentActivity, province: e.target.value })}
-            required
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* City */}
-          <input
-            type="text"
-            placeholder="City"
-            value={currentActivity.city}
-            onChange={(e) => setCurrentActivity({ ...currentActivity, city: e.target.value })}
-            required
-            className="px-3 py-2 border rounded"
-          />
-
-          {/* Location Maps */}
-          <textarea
-            placeholder="Embed Google Maps iframe"
-            value={currentActivity.location_maps}
-            onChange={(e) =>
-              setCurrentActivity({
-                ...currentActivity,
-                location_maps: e.target.value,
-              })
-            }
-            required
-            className="col-span-3 px-3 py-2 border rounded"
-          />
-        </div>
-
-        {/* Submit & Cancel Buttons */}
-        <div className="flex gap-4 mt-4">
-          <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded">
-            {isEditing ? "Update Activity" : "Create Activity"}
-          </button>
-          {isEditing && (
-            <button
-              type="button"
-              onClick={resetForm}
-              className="px-4 py-2 text-white bg-gray-500 rounded">
-              Cancel
-            </button>
-          )}
-        </div>
-      </form>
+        <Link
+          href="/dashboard/activities/create"
+          className="px-4 py-2 text-white bg-blue-500 rounded">
+          Create Activites
+        </Link>
+      </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
@@ -348,7 +120,7 @@ const DashboardActivities = () => {
             </tr>
           </thead>
           <tbody>
-            {activities.map((activity, index) => (
+            {filteredActivities.map((activity, index) => (
               <tr key={activity.id}>
                 <td className="px-4 py-2 text-center border">{index + 1}</td>
                 <td className="px-4 py-2 border">{activity.title}</td>
@@ -372,16 +144,11 @@ const DashboardActivities = () => {
                 <td className="px-4 py-2 border">{activity.province}</td>
                 <td className="px-4 py-2 border">{activity.city}</td>
                 <td className="px-4 py-2 text-center border">
-                  <button
-                    onClick={() =>
-                      setCurrentActivity({
-                        ...activity,
-                        imageFiles: [],
-                      }) || setIsEditing(true)
-                    }
+                  <Link
+                    href={`/dashboard/activities/update/${activity.id}`}
                     className="px-2 py-1 mx-1 text-white bg-yellow-500 rounded hover:bg-yellow-600">
                     Edit
-                  </button>
+                  </Link>
                   <button
                     onClick={() => handleDelete(activity.id)}
                     className="px-2 py-1 mx-1 text-white bg-red-500 rounded hover:bg-red-600">
