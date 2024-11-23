@@ -182,7 +182,7 @@ export default function Home() {
       <div className="relative flex flex-col px-8 mt-8 rounded-xl md:mt-12 md:px-12 lg:mx-32 lg:pt-8 lg:py-4 lg:border-2 lg:border-[#cecece]">
         <h2 className="text-2xl font-bold text-center text-[#F96D00]">Trending Activities</h2>
         <div className="flex gap-4 p-8 overflow-x-auto">
-          {sortActivitiesByReviews(activities.slice(0, 10)).map((activity) => {
+          {sortActivitiesByReviews(activities.slice(0, 5)).map((activity) => {
             const priceAfterDiscount = activity.price - activity.price_discount;
             return (
               <div
